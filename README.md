@@ -21,11 +21,27 @@ This script is only meant to be run on debian OS (it might be ok for debian-base
 
 ## Usage
 
+```bash
+curl -L https://raw.githubusercontent.com/VincentNOURY/K8sInstall/main/script.sh | bash
+```
+OR
 
-```shell
+```bash
 wget https://raw.githubusercontent.com/VincentNOURY/K8sInstall/main/script.sh
 bash script.sh
 ```
+
+## Miscelaneous informations
+
+This script uses [cri-dockerd](https://github.com/Mirantis/cri-dockerd) and is based on the [official k8s documentation](https://kubernetes.io/docs/tasks/tools) (at the time of writing) and [official docker documentation](https://docs.docker.com/engine/install/debian).
+
+Especially these steps (in this order) :
+ - [Install kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux)
+ - [Install Docker](https://docs.docker.com/engine/install/debian)
+ - [Install cri-dockerd](https://github.com/Mirantis/cri-dockerd)
+ - [Installing kubeadm, kubelet and kubectl](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/#installing-kubeadm-kubelet-and-kubectl)
+ - [Calico documentation](https://docs.tigera.io/calico/latest/getting-started/kubernetes/quickstart)
+ - Moving containerd.sock -> /root to avoid conflicts with cri-dockerd (Because I couldn't find how to specify it whe using kubeadm init 😅)
 
 ## Known issues
 
