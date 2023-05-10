@@ -153,3 +153,5 @@ function main() {
 
     echo -e "$GREEN[INFO] If this is a worker node please run the kubeadm join comamnd from the master node$NC"
 }
+
+main
