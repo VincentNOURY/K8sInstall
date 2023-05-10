@@ -116,10 +116,14 @@ function kube_core_install() {
     echo -e "$GREEN[INFO] kubeadm, kubelet and kubectl Installed$NC"
 }
 
-function move_containerd() {
+function more_configs() {
     echo -e "$GREEN[INFO] Moving containerd$NC"
 
     mv /var/run/containerd/containerd.sock /root
+
+    echo -e "$GREEN[INFO] Disabling swap$NC"
+
+    sudo swapoff -a
 }
 
 function main() {
@@ -143,7 +147,7 @@ function main() {
     echo $SEP
 
     echo $SEP
-    move_containerd
+    more_configs
     echo $SEP
 
     echo $SEP
