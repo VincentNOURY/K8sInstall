@@ -59,7 +59,11 @@ function cri_dockerd() {
 
     echo -e "$GREEN[INFO] Installing dependencies$NC"
 
-    sudo apt-get install -y git golang > /dev/null 2>&1
+    sudo apt-get install -y git > /dev/null 2>&1
+    wget https://storage.googleapis.com/golang/getgo/installer_linux
+    chmod +x ./installer_linux
+    ./installer_linux
+    source ~/.bash_profile
 
     echo -e "$GREEN[INFO] Cloning repo$NC"
     git clone https://github.com/Mirantis/cri-dockerd.git
@@ -115,7 +119,7 @@ function kube_core_install() {
 function move_containerd() {
     echo -e "$GREEN[INFO] Moving containerd$NC"
 
-    mv /var/run/containerd/containerd.sock .
+    mv /var/run/containerd/containerd.sock /root
 }
 
 function main() {
