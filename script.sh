@@ -8,7 +8,7 @@ NC="\033[0m"
 
 function check_perms() {
     if [ "$EUID" -ne 0 ]; then
-        echo "$RED[ERROR] Please run as root$NC"
+        echo -e "$RED[ERROR] Please run as root$NC"
         exit
     fi
 }
@@ -16,24 +16,24 @@ function check_perms() {
 
 
 function kubectl_install() {
-    echo "$GREEN[INFO] Downloading kubectl binary$NC"
+    echo -e "$GREEN[INFO] Downloading kubectl binary$NC"
     curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-    echo "$GREEN[INFO] Installing kubectl binary$NC"
+    echo -e "$GREEN[INFO] Installing kubectl binary$NC"
     sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
-    echo "$GREEN[INFO] Checking kubectl version$NC"
+    echo -e "$GREEN[INFO] Checking kubectl version$NC"
     kubectl version --client
-    echo "$GREEN[INFO] Cleaning up$NC"
+    echo -e "$GREEN[INFO] Cleaning up$NC"
     rm kubectl
 }
 
 function docker_install() {
-    echo "$GREEN[INFO] Installing docker$NC"
+    echo -e "$GREEN[INFO] Installing docker$NC"
 
-    echo "$GREEN[INFO] Installing dependencies$NC"
+    echo -e "$GREEN[INFO] Installing dependencies$NC"
     sudo apt-get update
-    sudo apt-get install ca-certificates curl gnupg
+    sudo apt-get install -y ca-certificates curl gnupg
 
-    echo "$GREEN[INFO] Adding docker's official GPG key$NC"
+    echo -e "$GREEN[INFO] Adding docker's official GPG key$NC"
     sudo install -m 0755 -d /etc/apt/keyrings
     curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
     sudo chmod a+r /etc/apt/keyrings/docker.gpg
@@ -45,27 +45,28 @@ function docker_install() {
 
     sudo apt-get update
 
-    sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+    sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
-    echo "$GREEN[INFO] Checking docker version$NC"
+    echo -e "$GREEN[INFO] Checking docker version$NC"
     docker --version
 
-    echo "$GREEN[INFO] Docker installed successfully$NC"
+    echo -e "$GREEN[INFO] Docker installed successfully$NC"
 }
 
 
 function cri_dockerd() {
     echo -e "$GREEN[INFO] Installing cri-dockerd$NC"
 
-    echo -e "$GREEN[INFO] Getting archive$NC"
-    wget https://github.com/Mirantis/cri-dockerd/releases/download/v0.3.1/cri-dockerd-0.3.1.amd64.tgz
-    tar xzvf cri-dockerd-0.3.1.amd64.tgz
-
-    mkdir -p /usr/local/bin
+    echo -e "$GREEN[INFO] Cloning repo$NC"
+    git clone https://github.com/Mirantis/cri-dockerd.git
 
     echo -e "$GREEN[INFO] Installing cri-dockerd$NC"
 
-    install -o root -g root -m 0755 cri-dockerd/cri-dockerd /usr/local/bin/cri-dockerd
+    cd cri-dockerd
+    mkdir bin
+    go build -o bin/cri-dockerd
+    mkdir -p /usr/local/bin
+    install -o root -g root -m 0755 bin/cri-dockerd /usr/local/bin/cri-dockerd
     cp -a packaging/systemd/* /etc/systemd/system
     sed -i -e 's,/usr/bin/cri-dockerd,/usr/local/bin/cri-dockerd,' /etc/systemd/system/cri-docker.service
     
@@ -74,6 +75,11 @@ function cri_dockerd() {
     systemctl daemon-reload
     systemctl enable cri-docker.service
     systemctl enable --now cri-docker.socket
+
+    echo -e "$GREEN[INFO] Cleaning up$NC"
+    
+    cd ..
+    rm -rf cri-dockerd
 
     echo -e "$GREEN[INFO] cri-dockerd Installed$NC"
 }
@@ -147,6 +153,8 @@ function main() {
     kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.25.1/manifests/tigera-operator.yaml
     kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.25.1/manifests/custom-resources.yaml
     watch kubectl get pods -n calico-system
+
+
     and wait for the pods to be ready'
 
     echo -e "$NC"
@@ -154,4 +162,4 @@ function main() {
     echo -e "$GREEN[INFO] If this is a worker node please run the kubeadm join comamnd from the master node$NC"
 }
 
-main
+main | tee kubernetes_install.log
