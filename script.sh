@@ -30,8 +30,8 @@ function docker_install() {
     echo -e "$GREEN[INFO] Installing docker$NC"
 
     echo -e "$GREEN[INFO] Installing dependencies$NC"
-    sudo apt-get update
-    sudo apt-get install -y ca-certificates curl gnupg
+    sudo apt-get update > /dev/null 2>&1
+    sudo apt-get install -y ca-certificates curl gnupg > /dev/null 2>&1
 
     echo -e "$GREEN[INFO] Adding docker's official GPG key$NC"
     sudo install -m 0755 -d /etc/apt/keyrings
@@ -43,9 +43,9 @@ function docker_install() {
     "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
     sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
-    sudo apt-get update
+    sudo apt-get update > /dev/null 2>&1
 
-    sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+    sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin > /dev/null 2>&1
 
     echo -e "$GREEN[INFO] Checking docker version$NC"
     docker --version
@@ -89,8 +89,8 @@ function kube_core_install() {
 
     echo -e "$GREEN[INFO] Installing dependencies$NC"
 
-    sudo apt-get update
-    sudo apt-get install -y apt-transport-https ca-certificates curl
+    sudo apt-get update > /dev/null 2>&1
+    sudo apt-get install -y apt-transport-https ca-certificates curl > /dev/null 2>&1
 
     echo -e "$GREEN[INFO] Adding kubernetes' official GPG key$NC"
 
@@ -99,8 +99,8 @@ function kube_core_install() {
 
     echo -e "$GREEN[INFO] Installing kubeadm, kubelet and kubectl$NC"
 
-    sudo apt-get update
-    sudo apt-get install -y kubelet kubeadm kubectl
+    sudo apt-get update > /dev/null 2>&1
+    sudo apt-get install -y kubelet kubeadm kubectl > /dev/null 2>&1
     sudo apt-mark hold kubelet kubeadm kubectl
     
     echo -e "$GREEN[INFO] kubeadm, kubelet and kubectl Installed$NC"
