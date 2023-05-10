@@ -58,7 +58,7 @@ function cri_dockerd() {
     echo -e "$GREEN[INFO] Installing cri-dockerd$NC"
 
     echo -e "$GREEN[INFO] Installing dependencies$NC"
-    
+
     sudo apt-get install -y git golang > /dev/null 2>&1
 
     echo -e "$GREEN[INFO] Cloning repo$NC"
@@ -119,7 +119,7 @@ function move_containerd() {
 }
 
 function main() {
-    echo "$GREEN[INFO] Welcome to the k8s installation script$NC"
+    echo -e "$GREEN[INFO] Welcome to the k8s installation script$NC"
     check_perms
 
     echo $SEP
