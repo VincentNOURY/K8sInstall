@@ -16,6 +16,9 @@ function check_perms() {
 
 
 function kubectl_install() {
+    echo -e "$GREEN[INFO] Installing dependencies$NC"
+    sudo apt-get update > /dev/null 2>&1
+    sudo apt-get install -y curl > /dev/null 2>&1
     echo -e "$GREEN[INFO] Downloading kubectl binary$NC"
     curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
     echo -e "$GREEN[INFO] Installing kubectl binary$NC"
@@ -31,7 +34,7 @@ function docker_install() {
 
     echo -e "$GREEN[INFO] Installing dependencies$NC"
     sudo apt-get update > /dev/null 2>&1
-    sudo apt-get install -y ca-certificates curl gnupg > /dev/null 2>&1
+    sudo apt-get install -y ca-certificates gnupg > /dev/null 2>&1
 
     echo -e "$GREEN[INFO] Adding docker's official GPG key$NC"
     sudo install -m 0755 -d /etc/apt/keyrings
